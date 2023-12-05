@@ -33,15 +33,18 @@ mongoose.connection.on('error',(err)=>{
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something went wrong!');
-  });
-  
-  if(process.env.NODE_ENV=='production'){
-    const path = require('path')
+});
 
-    app.get('/',(req,res)=>{
-        app.use(express.static(path.resolve(__dirname,'client','build')))
-        res.sendFile(path.resolve(__dirname,'client','build','index.html'))
-    })
+if (process.env.NODE_ENV == 'production') {
+    const path = require('path');
+
+    // Serve static files from the 'client/build' directory
+    app.use(express.static(path.resolve(__dirname, 'client', 'build')));
+
+    // Handle all other routes by serving the 'index.html' file
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
 }
 
 app.listen(PORT,()=>{
